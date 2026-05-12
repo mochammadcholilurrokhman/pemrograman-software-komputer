@@ -1,0 +1,336 @@
+{% load static %}
+<!-- Load static files -->
+<style>
+  :root {
+    --navbar-bg: #fff;
+    --navbar-text: #333;
+    --navbar-border: #e0e0e0;
+    --primary-color: #0d6efd;
+    --hover-bg: rgba(0, 0, 0, 0.05);
+  }
+
+  .navbar-menu .nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .navbar-menu .nav-link {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    position: relative;
+  }
+
+  .navbar-menu .nav-link:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+  }
+
+  .navbar-menu .nav-link.active {
+    color: var(--primary-color);
+    font-weight: 600;
+    border-bottom: 3px solid var(--primary-color);
+  }
+
+  .toggle-navbar-btn {
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+  }
+
+  .toggle-navbar-btn:hover {
+    color: var(--primary-color);
+  }
+
+  /* Header Styling */
+  .header {
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--navbar-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
+  }
+
+  .logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    min-width: 200px;
+  }
+
+  .logo:hover {
+    color: #0b5ed7;
+  }
+
+  /* Navbar Actions (Buttons) */
+  .navbar-actions {
+    align-items: center;
+  }
+
+  .navbar-actions .btn {
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+
+  .navbar-actions .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+  }
+
+  /* Navbar Icons Styling */
+  .navbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: var(--navbar-text);
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    position: relative;
+  }
+
+  .icon-btn:hover {
+    color: var(--primary-color);
+  }
+
+  .dropdown-item {
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+  }
+
+  .dropdown-item.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  /* Offcanvas Mobile Menu */
+  .offcanvas {
+    background-color: var(--navbar-bg);
+  }
+
+  .offcanvas-header {
+    border-bottom: 1px solid var(--navbar-border);
+  }
+
+  .offcanvas-body .nav-link {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid transparent;
+  }
+
+  .offcanvas-body .nav-link:hover {
+    border-left-color: var(--primary-color);
+  }
+
+  .offcanvas-body .nav-link.active {
+    border-left-color: var(--primary-color);
+    background-color: var(--hover-bg);
+  }
+</style>
+
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
+  <div class="d-flex align-items-center justify-content-between w-100">
+    <!-- Logo -->
+    <a href="/" class="logo d-flex align-items-center">
+      <i class="bi bi-snow me-2"></i>
+      <span class="d-none d-lg-block">Frozeria Stock</span>
+    </a>
+
+    <!-- Desktop Navigation Menu -->
+    <nav class="navbar-menu d-none d-lg-flex ms-auto flex-grow-1">
+      <ul class="nav-menu d-flex align-items-center gap-1">
+        {% with request.resolver_match.url_name as current_url %}
+        <li>
+          <a
+            href="{% url 'dashboard' %}"
+            class="nav-link {% if current_url == 'dashboard' or current_url == 'edit_dashboard' or current_url == 'tambah_dashboard' or current_url == 'detail_dashboard' %}active{% endif %}">
+            <i class="bi bi-speedometer me-1"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'kategori' %}"
+            class="nav-link {% if current_url == 'kategori' or current_url == 'tambah_kategori' %}active{% endif %}">
+            <i class="bi bi-folder2-open me-1"></i>
+            <span>Kategori</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'bantuan' %}"
+            class="nav-link {% if current_url == 'bantuan' %}active{% endif %}">
+            <i class="bi bi-question-circle me-1"></i>
+            <span>Bantuan</span>
+          </a>
+        </li>
+        {% endwith %}
+      </ul>
+    </nav>
+
+    <!-- Navbar Action Buttons -->
+    <div class="navbar-actions d-none d-lg-flex ms-3">
+      {% if request.resolver_match.url_name == 'kategori' or request.resolver_match.url_name == 'tambah_kategori' %}
+      <a
+        href="{% url 'tambah_kategori' %}"
+        class="btn btn-success btn-sm d-flex align-items-center gap-2">
+        <i class="bi bi-plus-lg"></i>
+        <span>Tambah Kategori</span>
+      </a>
+      {% elif request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'edit_dashboard' or request.resolver_match.url_name == 'tambah_dashboard' or request.resolver_match.url_name == 'detail_dashboard' %}
+      <a
+        href="{% url 'tambah_dashboard' %}"
+        class="btn btn-success btn-sm d-flex align-items-center gap-2">
+        <i class="bi bi-plus-lg"></i>
+        <span>Tambah Barang</span>
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- Search Bar
+    <div class="navbar-search d-none d-lg-flex mx-3">
+      <input
+        type="text"
+        class="search-input form-control"
+        placeholder="Cari produk..."
+        aria-label="Search" />
+    </div> -->
+
+    <!-- Navbar Icons (Desktop) -->
+    <!-- <div class="navbar-icons d-none d-lg-flex">
+      <!-- Notifications -->
+    <!-- <div class="dropdown">
+        <button
+          class="icon-btn"
+          type="button"
+          id="notificationDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+          <i class="bi bi-bell"></i>
+          <span class="badge-notification">3</span>
+        </button>
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="notificationDropdown">
+          <li><h6 class="dropdown-header">Notifikasi</h6></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-info-circle me-2"></i>
+              <span>Stok produk habis</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <span>Pembaruan sistem tersedia</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-check-circle me-2"></i>
+              <span>Transaksi berhasil</span>
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item text-center small" href="#"
+              >Lihat semua notifikasi</a
+            >
+          </li>
+        </ul>
+      </div> -->
+
+    <!-- User Profile Dropdown -->
+    <!-- <div class="dropdown">
+        <button
+          class="icon-btn"
+          type="button"
+          id="profileDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+          <i class="bi bi-person-circle"></i>
+        </button>
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          aria-labelledby="profileDropdown">
+          <li>
+            <h6 class="dropdown-header">
+              {% if user.is_authenticated %} {{ user.username }} {% else %}
+              Pengguna {% endif %}
+            </h6>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          {% if user.is_authenticated %}
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-person me-2"></i>
+              <span>Profil Saya</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-gear me-2"></i>
+              <span>Pengaturan</span>
+            </a>
+          </li>
+          <li><hr class="dropdown-divider" /></li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-box-arrow-right me-2"></i>
+              <span>Keluar</span>
+            </a>
+          </li>
+          {% else %}
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-box-arrow-in-right me-2"></i>
+              <span>Masuk</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div> -->
+
+    <!-- Mobile Menu Toggle -->
+    <!-- <div class="d-lg-none ms-auto">
+      <button
+        class="icon-btn"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#navbarOffcanvas"
+        aria-controls="navbarOffcanvas">
+        <i class="bi bi-list"></i>
+      </button>
+    </div> -->
+  </div>
+  <!-- End Logo -->
+
+  <!-- End Icons Navigation -->
+</header>
+
+<!-- ======= Mobile Offcanvas Menu ======= -->
+
+<!-- End Mobile Offcanvas Menu -->
+
+<!-- End Header -->

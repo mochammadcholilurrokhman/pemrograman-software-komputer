@@ -1,0 +1,174 @@
+{% extends 'layouts/main.html' %} {% load static %} {% block title %}Kategori 
+{% endblock %} {% block extra_css %}
+
+<!-- DataTables CSS -->
+<link
+  rel="stylesheet"
+  href="{% static 'assets/vendor/datatables/dataTables.bootstrap5.min.css' %}" />
+<link
+  rel="stylesheet"
+  href="{% static 'assets/vendor/datatables/responsive.bootstrap5.min.css' %}" />
+
+<!-- SweetAlert2 CSS -->
+<link
+  rel="stylesheet"
+  href="{% static 'assets/vendor/sweetalert2/sweetalert2.min.css' %}" />
+{% endblock %} {% block content %}
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1 class="text-primary fw-bold">Daftar Kategori</h1>
+    <nav>
+      <ol class="breadcrumb bg-light p-2 rounded">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item">Kategori</li>
+        <li class="breadcrumb-item active">Data</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="section mt-4">
+    <div class="row g-0">
+      <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-0">
+          <div
+            class="card-header bg-primary text-white d-flex justify-content-between align-items-center mb-3">
+            <h5 class="m-0">Daftar Kategori</h5>
+          </div>
+
+          <div class="card-body">
+            <div class="table-responsive">
+              <table
+                id="kategoriTable"
+                class="table table-hover table-bordered align-middle w-100">
+                <thead class="table-primary">
+                  <tr>
+                    <th style="width: 8%" class="text-center">No</th>
+                    <th style="width: 20%">Nama Kategori</th>
+                    <th style="width: 10%">Jumlah Barang</th>
+                    <th style="width: 10%">Tanggal Dibuat</th>
+                    <th style="width: 5%">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data akan dimuat oleh DataTables -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  #kategoriTable_wrapper .dataTables_info,
+  #kategoriTable_wrapper .dataTables_paginate {
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+  }
+
+  main.main {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .card {
+    margin: 0 !important;
+  }
+</style>
+{% endblock %} {% block extra_js %}
+<!-- Script toggle untuk input dan untuk table -->
+
+<!-- DataTables JS -->
+<script src="{% static 'assets/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables/dataTables.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables/responsive.bootstrap5.min.js' %}"></script>
+
+<!-- SweetAlert2 JS -->
+<script src="{% static 'assets/vendor/sweetalert2/sweetalert2.all.min.js' %}"></script>
+
+<script>
+  $(document).ready(function () {
+    // Initialize DataTables
+    var table = $("#kategoriTable").DataTable({
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      ajax: {
+        url: "{% url 'kategori_datatable' %}",
+        type: "GET",
+      },
+      columns: [
+        {
+          data: null,
+          orderable: false,
+          render: function (data, type, row, meta) {
+            return meta.row + meta.settings._iDisplayStart + 1;
+          },
+        },
+        { data: "nama_kategori" },
+        { data: "jumlah_barang" },
+        { data: "dibuat" },
+        {
+          data: "actions",
+          orderable: false,
+        },
+      ],
+      pageLength: 10,
+      lengthMenu: [
+        [10, 25, 50, 100],
+        [10, 25, 50, 100],
+      ],
+      language: {
+        processing: "Memproses...",
+        search: "Cari:",
+        lengthMenu: "Tampilkan _MENU_ data per halaman",
+        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+        infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+        infoFiltered: "(disaring dari _MAX_ total data)",
+        paginate: {
+          first: "Pertama",
+          last: "Terakhir",
+          next: "Prev",
+          previous: "Next",
+        },
+        emptyTable: "Tidak ada data tersedia",
+      },
+    });
+
+    // Handle delete button dengan konfirmasi
+    $(document).on("click", ".btn-delete", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var deleteUrl = $(this).data("href");
+      var kategoriName = $(this).data("name");
+
+      Swal.fire({
+        title: "Hapus Kategori?",
+        html: `Apakah Anda yakin ingin menghapus kategori <strong>${kategoriName}</strong>?<br><small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Ya, Hapus!",
+        cancelButtonText: "Batal",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirect ke delete URL
+          window.location.href = deleteUrl;
+        }
+      });
+    });
+
+    // DataTables initialization completed above
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,200 @@
+{% extends 'layouts/main.html' %} {% load static %} {% block title %}Panduan
+Penggunaan Sistem{% endblock %} {% block content %}
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1 class="text-primary fw-bold">Panduan Penggunaan Sistem</h1>
+    <nav>
+      <ol class="breadcrumb bg-light p-2 rounded">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item active">Bantuan</li>
+      </ol>
+    </nav>
+  </div>
+
+  <section class="section mt-4">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <!-- Cara Menambah Barang Baru -->
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="m-0">
+              <i class="bi bi-plus-circle me-2"></i>Cara Menambah Barang Baru
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <ol class="list-group list-group-numbered">
+              <li class="list-group-item border-0 ps-0 mb-3">
+                <strong>Buka halaman Dashboard</strong>, klik tombol
+                <span class="badge bg-success"
+                  ><i class="bi bi-plus"></i> Tambah Barang</span
+                >
+                di isian atas.
+              </li>
+              <li class="list-group-item border-0 ps-0 mb-3">
+                <strong>Unggah foto barang</strong> (opsional), isi formulir:
+                nama, kategori, satuan, jumlah stok, harga, dan lainnya.
+              </li>
+              <li class="list-group-item border-0 ps-0">
+                Klik
+                <span class="badge bg-success"
+                  ><i class="bi bi-check-circle me-1"></i>Simpan Barang</span
+                >. Barang akan muncul di daftar dashboard.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Cara Update Stok Barang Masuk -->
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-header bg-info text-white">
+            <h5 class="m-0">
+              <i class="bi bi-arrow-repeat me-2"></i>Cara Update Stok Barang
+              Masuk
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <ol class="list-group list-group-numbered">
+              <li class="list-group-item border-0 ps-0 mb-3">
+                <strong>Temukan barang</strong> di dashboard menggunakan kolom
+                pencarian atau filter kategori.
+              </li>
+              <li class="list-group-item border-0 ps-0 mb-3">
+                Klik tombol
+                <span class="badge bg-warning text-dark"
+                  ><i class="bi bi-pencil-square me-1"></i>Edit</span
+                >
+                pada baris barang tersebut.
+              </li>
+              <li class="list-group-item border-0 ps-0">
+                <strong>Ubah nilai Jumlah stok</strong> sesuai kondisi saat ini,
+                lalu klik
+                <span class="badge bg-success"
+                  ><i class="bi bi-check-circle me-1"></i>Simpan Barang</span
+                >.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Cara Mengelola Kategori -->
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="m-0">
+              <i class="bi bi-folder2-open me-2"></i>Cara Mengelola Kategori
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <ol class="list-group list-group-numbered">
+              <li class="list-group-item border-0 ps-0 mb-3">
+                <strong>Buka halaman Kategori</strong> dan navigasi atas.
+              </li>
+              <li class="list-group-item border-0 ps-0 mb-3">
+                <strong>Tambah, edit, atau hapus kategori</strong> sesuai
+                kebutuhan toko.
+              </li>
+              <li class="list-group-item border-0 ps-0">
+                <strong>Menghapus kategori</strong> tidak akan menghapus barang
+                — barang akan menjadi tidak berkategori.
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="alert alert-info border-0" role="alert">
+          <div class="d-flex align-items-start">
+            <i
+              class="bi bi-info-circle me-3 mt-1"
+              style="font-size: 1.3rem"></i>
+            <div>
+              <strong>Catatan:</strong> Satuan barang diisi bebas sesuai
+              kebutuhan — misalnya:
+              <span class="badge bg-light text-dark">pcs</span>
+              <span class="badge bg-light text-dark">pack</span>
+              <span class="badge bg-light text-dark">box</span>
+              <span class="badge bg-light text-dark">kg</span>
+              <span class="badge bg-light text-dark">liter</span>, dan
+              lain-lain.
+            </div>
+          </div>
+        </div>
+        <!-- Informasi Pembuat Aplikasi -->
+        <div class="card shadow-sm border-0 bg-light mt-4">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="m-0">
+              <i class="bi bi-person-card me-2"></i>Informasi Pembuat Aplikasi
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="info-item mb-3">
+                  <label class="form-label fw-bold text-secondary">
+                    <i class="bi bi-person me-2"></i>Nama
+                  </label>
+                  <p class="ms-3">Mochammad Cholilur Rokhman</p>
+                </div>
+                <div class="info-item mb-3">
+                  <label class="form-label fw-bold text-secondary">
+                    <i class="bi bi-hash me-2"></i>NIM
+                  </label>
+                  <p class="ms-3">2241720033</p>
+                </div>
+                <div class="info-item">
+                  <label class="form-label fw-bold text-secondary">
+                    <i class="bi bi-book me-2"></i>Kelas
+                  </label>
+                  <p class="ms-3">TI-4D</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item mb-3">
+                  <label class="form-label fw-bold text-secondary">
+                    <i class="bi bi-geo-alt me-2"></i>Alamat
+                  </label>
+                  <p class="ms-3">Kedamean RT 07 RW 09 Kepulungan Gempol Pasuruan</p>
+                </div>
+                <div class="info-item mb-3">
+                  <label class="form-label fw-bold text-secondary">
+                    <i class="bi bi-telephone me-2"></i>Nomor Telepon
+                  </label>
+                  <p class="ms-3">082140615958</p>
+                </div>
+                <div class="info-item">
+                  <label class="form-label fw-bold text-secondary">
+                    <i class="bi bi-envelope me-2"></i>Email
+                  </label>
+                  <p class="ms-3">ilulsrut69@gmail.com</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  .list-group-numbered {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+  }
+
+  .list-group-item {
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  .badge {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .card-header {
+    border-radius: 0.25rem 0.25rem 0 0;
+  }
+</style>
+{% endblock %}

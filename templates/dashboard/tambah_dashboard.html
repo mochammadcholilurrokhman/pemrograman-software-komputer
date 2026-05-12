@@ -1,0 +1,597 @@
+{% extends 'layouts/main.html' %} {% load static %} {% block title %}Tambah
+Barang{% endblock %} {% block content %}
+<main id="main" class="main">
+  <!-- <div class="pagetitle">
+    <h1 class="text-primary fw-bold">Tambah Barang Baru</h1>
+    <nav>
+      <ol class="breadcrumb bg-light p-2 rounded">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item">
+          <a href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Tambah Barang</li>
+      </ol>
+    </nav>
+  </div> -->
+
+  <section class="section mt-2">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-primary text-white">
+            <h5 class="m-0">Form Tambah Barang</h5>
+          </div>
+
+          <div class="card-body p-4">
+            {% if messages %} {% for message in messages %}
+            <div
+              class="alert alert-{{ message.tags }} alert-dismissible fade show"
+              role="alert">
+              <i
+                class="bi bi-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+              {{ message }}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"></button>
+            </div>
+            {% endfor %} {% endif %}
+
+            <form
+              method="POST"
+              action="{% url 'tambah_dashboard' %}"
+              class="needs-validation"
+              enctype="multipart/form-data"
+              novalidate>
+              {% csrf_token %}
+
+              <!-- Row 1: Foto Barang (Diperlebar) -->
+              <div class="row mb-2">
+                <div class="col-md-12">
+                  <div class="mb-4">
+                    <label for="foto_barang" class="form-label fw-bold">
+                      <i class="bi bi-image me-2 text-primary"></i>
+                      Foto Barang
+                    </label>
+
+                    <!-- Upload Area -->
+                    <div
+                      class="upload-area border-2 border-dashed rounded p-5 text-center"
+                      id="uploadArea"
+                      style="
+                        cursor: pointer;
+                        background-color: #f8f9fa;
+                        transition: all 0.3s ease;
+                        min-height: 250px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                      ">
+                      <i
+                        class="bi bi-cloud-arrow-up"
+                        style="font-size: 3rem; color: #0d6efd"></i>
+                      <p
+                        class="mt-4 mb-2"
+                        style="font-weight: 500; color: #333; font-size: 1rem">
+                        Klik untuk memilih foto, atau seret file ke sini
+                      </p>
+                      <p class="small text-muted mb-3">
+                        Format: JPG, PNG — Maks 2 MB
+                      </p>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-primary">
+                        Pilih Foto
+                      </button>
+                    </div>
+
+                    <!-- Hidden File Input -->
+                    <input
+                      type="file"
+                      class="form-control form-control-lg d-none"
+                      id="foto_barang"
+                      name="foto_barang"
+                      accept="image/jpeg,image/png"
+                      style="display: none" />
+
+                    <!-- Image Preview -->
+                    <div
+                      id="previewContainer"
+                      style="
+                        margin-top: 15px;
+                        display: none;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        text-align: center;
+                      ">
+                      <img
+                        id="preview"
+                        style="
+                          width: 30%;
+                          height: 30%;
+                          object-fit: cover;
+                          border-radius: 8px;
+                          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                        " />
+
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-danger mt-2"
+                        id="removeImage"
+                        style="width: 120px">
+                        <i class="bi bi-trash me-1"></i> Hapus
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 2: Nama Barang, Kategori, dan Satuan (Jejerkan) -->
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-2">
+                    <label for="nama_barang" class="form-label fw-bold">
+                      <i class="bi bi-box2 me-2 text-primary"></i>
+                      Nama Barang
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="nama_barang"
+                      name="nama_barang"
+                      placeholder="Contoh: Es Krim Vanila..."
+                      required
+                      minlength="3"
+                      maxlength="255" />
+                    <!-- <div class="form-text">Masukkan nama barang yang jelas</div>
+                    <div class="invalid-feedback">
+                      Nama barang harus diisi (minimal 3 karakter)
+                    </div> -->
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="mb-2">
+                    <label for="kategori" class="form-label fw-bold">
+                      <i class="bi bi-folder2-open me-2 text-primary"></i>
+                      Kategori
+                    </label>
+                    <select
+                      class="form-select form-select-lg"
+                      id="kategori"
+                      name="kategori">
+                      <option value="">-- Pilih Kategori --</option>
+                      {% for kat in kategoris %}
+                      <option value="{{ kat.id_kategori }}">
+                        {{ kat.nama_kategori }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                    <!-- <div class="invalid-feedback">Kategori harus dipilih</div> -->
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="mb-2">
+                    <label for="satuan" class="form-label fw-bold">
+                      <i class="bi bi-rulers me-2 text-primary"></i>
+                      Satuan
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="satuan"
+                      name="satuan"
+                      placeholder="Contoh: Pcs, Kg, Liter..."
+                      required
+                      maxlength="100" />
+                    <!-- <div class="invalid-feedback">Satuan harus diisi</div> -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 3: Jumlah Stok dan Stok Minimum -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="jumlah_stok" class="form-label fw-bold">
+                      <i class="bi bi-stack me-2 text-primary"></i>
+                      Jumlah Stok
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="jumlah_stok"
+                      name="jumlah_stok"
+                      placeholder="0"
+                      min="0"
+                      value="0"
+                      required />
+                    <!-- <div class="invalid-feedback">Jumlah stok harus diisi</div> -->
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="stok_minimum" class="form-label fw-bold">
+                      <i
+                        class="bi bi-exclamation-triangle me-2 text-warning"></i>
+                      Stok Minimum
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="stok_minimum"
+                      name="stok_minimum"
+                      placeholder="0"
+                      min="0"
+                      value="0"
+                      required />
+                    <!-- <div class="form-text">
+                      Akan alert jika stok di bawah angka ini
+                    </div> -->
+                    <!-- <div class="invalid-feedback">Stok minimum harus diisi</div> -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 4: Harga Beli dan Harga Jual -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="harga_beli" class="form-label fw-bold">
+                      <i class="bi bi-cash-coin me-2 text-primary"></i>
+                      Harga Beli
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="harga_beli"
+                      name="harga_beli"
+                      placeholder="0"
+                      min="0"
+                      step="0.01"
+                      value="0"
+                      required />
+                    <!-- <div class="invalid-feedback">Harga beli harus diisi</div> -->
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="harga_jual" class="form-label fw-bold">
+                      <i class="bi bi-tag me-2 text-primary"></i>
+                      Harga Jual
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="harga_jual"
+                      name="harga_jual"
+                      placeholder="0"
+                      min="0"
+                      step="0.01"
+                      value="0"
+                      required />
+                    <div class="invalid-feedback">Harga jual harus diisi</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 5: Berat dan Lokasi Simpan -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="berat" class="form-label fw-bold">
+                      <i class="bi bi-weight me-2 text-primary"></i>
+                      Berat (Kg)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="berat"
+                      name="berat"
+                      placeholder="0"
+                      min="0"
+                      step="0.01"
+                      value="0"
+                      required />
+                    <div class="invalid-feedback">Berat harus diisi</div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="lokasi_simpan" class="form-label fw-bold">
+                      <i class="bi bi-geo-alt me-2 text-primary"></i>
+                      Lokasi Simpan
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="lokasi_simpan"
+                      name="lokasi_simpan"
+                      placeholder="Contoh: Rak A1, Kulkas 2..."
+                      required
+                      maxlength="255" />
+                    <div class="invalid-feedback">
+                      Lokasi simpan harus diisi
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 6: Deskripsi -->
+              <div class="mb-2">
+                <label for="deskripsi" class="form-label fw-bold">
+                  <i class="bi bi-card-text me-2 text-primary"></i>
+                  Deskripsi Barang
+                </label>
+                <textarea
+                  class="form-control form-control-lg"
+                  id="deskripsi"
+                  name="deskripsi"
+                  rows="4"
+                  placeholder="Deskripsi lengkap tentang barang ini (Opsional)"></textarea>
+              </div>
+
+              <!-- Buttons -->
+              <div class="d-flex gap-2 justify-content-end mt-2">
+                <a
+                  href="{% url 'dashboard' %}"
+                  class="btn btn-secondary btn-lg">
+                  <i class="bi bi-x-circle me-2"></i>
+                  Kembali
+                </a>
+                <button type="submit" class="btn btn-success btn-lg">
+                  <i class="bi bi-check-circle me-2"></i>
+                  Simpan Barang
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Info Card -->
+        <!-- <div class="card mt-4 border-0 bg-light">
+          <div class="card-body">
+            <h6 class="card-title mb-3">
+              <i class="bi bi-info-circle text-info me-2"></i>
+              Informasi Penting
+            </h6>
+            <ul class="small mb-0">
+              <li>Pastikan semua data barang sudah benar sebelum menyimpan</li>
+              <li>Harga jual biasanya lebih besar dari harga beli</li>
+              <li>Stok minimum digunakan untuk alert kehabisan stok</li>
+              <li>Anda dapat mengedit data barang setelah dibuat</li>
+            </ul>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  main.main {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .card {
+    margin: 0 !important;
+    border-radius: 8px;
+  }
+
+  .form-control-lg,
+  .form-select-lg {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    font-size: 1rem;
+  }
+
+  .form-control-lg:focus,
+  .form-select-lg:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  /* Form validation styles */
+  .was-validated .form-control:valid,
+  .was-validated .form-select:valid {
+    border-color: #28a745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: calc(1.5em + 0.75rem);
+  }
+
+  .was-validated .form-control:invalid,
+  .was-validated .form-select:invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5h-.6z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: calc(1.5em + 0.75rem);
+  }
+
+  @media (max-width: 768px) {
+    .row {
+      padding: 0 1rem;
+    }
+
+    .d-flex.gap-2 {
+      flex-direction: column;
+    }
+
+    .d-flex.gap-2 .btn {
+      width: 100%;
+    }
+  }
+
+  /* Upload Area Styles */
+  .upload-area {
+    border-color: #dee2e6 !important;
+    transition: all 0.3s ease;
+  }
+
+  .upload-area:hover {
+    background-color: #e7f1ff;
+    border-color: #0d6efd !important;
+  }
+
+  .upload-area i {
+    transition: transform 0.3s ease;
+  }
+
+  .upload-area:hover i {
+    transform: scale(1.1);
+  }
+</style>
+
+{% block extra_js %}
+<script>
+  const uploadArea = document.getElementById("uploadArea");
+  const fileInput = document.getElementById("foto_barang");
+  const previewContainer = document.getElementById("previewContainer");
+  const preview = document.getElementById("preview");
+  const removeImageBtn = document.getElementById("removeImage");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+
+  // Click to upload
+  uploadArea.addEventListener("click", () => {
+    fileInput.click();
+  });
+
+  // File input change
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFile(file);
+    }
+  });
+
+  // Drag and drop
+  uploadArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadArea.style.backgroundColor = "#e7f1ff";
+    uploadArea.style.borderColor = "#0d6efd";
+  });
+
+  uploadArea.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    uploadArea.style.backgroundColor = "#f8f9fa";
+    uploadArea.style.borderColor = "#dee2e6";
+  });
+
+  uploadArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    uploadArea.style.backgroundColor = "#f8f9fa";
+    uploadArea.style.borderColor = "#dee2e6";
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith("image/")) {
+        fileInput.files = files;
+        handleFile(file);
+      } else {
+        alert("Hanya file gambar (JPG, PNG) yang diperbolehkan");
+      }
+    }
+  });
+
+  // Handle file
+  function handleFile(file) {
+    // Validasi file size
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Ukuran file terlalu besar. Maksimal 2 MB.");
+      fileInput.value = "";
+      return;
+    }
+
+    // Validasi file type
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
+      alert("Format file harus JPG atau PNG");
+      fileInput.value = "";
+      return;
+    }
+
+    // Preview image
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      preview.src = event.target.result;
+      previewContainer.style.display = "flex";
+      uploadArea.style.display = "none";
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Remove image
+  removeImageBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    fileInput.value = "";
+    previewContainer.style.display = "none";
+    uploadArea.style.display = "block";
+  });
+
+  // Image preview (untuk preview existing)
+  document
+    .getElementById("foto_barang")
+    .addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const preview = document.getElementById("preview");
+          preview.src = event.target.result;
+          previewContainer.style.display = "flex";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+  // Form validation
+  (function () {
+    "use strict";
+    window.addEventListener(
+      "load",
+      function () {
+        var forms = document.querySelectorAll(".needs-validation");
+        Array.prototype.slice.call(forms).forEach(function (form) {
+          form.addEventListener(
+            "submit",
+            function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add("was-validated");
+            },
+            false,
+          );
+        });
+      },
+      false,
+    );
+  })();
+</script>
+{% endblock %} {% endblock %}

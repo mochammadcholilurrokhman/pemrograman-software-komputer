@@ -1,0 +1,351 @@
+{% extends 'layouts/main.html' %} {% load static %} {% block title %}Kategori 
+{% endblock %} {% block extra_css %}
+
+<!-- DataTables CSS -->
+<link
+  rel="stylesheet"
+  href="{% static 'assets/vendor/datatables/dataTables.bootstrap5.min.css' %}" />
+<link
+  rel="stylesheet"
+  href="{% static 'assets/vendor/datatables/responsive.bootstrap5.min.css' %}" />
+
+<!-- SweetAlert2 CSS -->
+<link
+  rel="stylesheet"
+  href="{% static 'assets/vendor/sweetalert2/sweetalert2.min.css' %}" />
+{% endblock %} {% block content %}
+<main id="main" class="main">
+  <!-- <div class="pagetitle">
+    <h1 class="text-primary fw-bold">Daftar Kategori</h1>
+    <nav>
+      <ol class="breadcrumb bg-light p-2 rounded">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item">Kategori</li>
+        <li class="breadcrumb-item active">Data</li>
+      </ol>
+    </nav> -->
+  </div>
+  <!-- Summary Cards -->
+<section class="section mt-3 px-3">
+  <div class="row g-3">
+    
+    <!-- Total Barang -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #0d6efd !important;">
+    <div class="card-body d-flex flex-column align-items-center justify-content-center text-center gap-2 mt-2">
+        <div class="rounded-circle d-flex align-items-center justify-content-center"
+            style="width:56px;height:56px;background:#e7f1ff;flex-shrink:0;">
+            <i class="bi bi-box-seam fs-4 text-primary"></i>
+          </div>
+          <div>
+            <div class="text-muted small fw-semibold">Total Barang</div>
+            <div class="fw-bold fs-4">{{ jumlah_barang }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Kategori -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #6f42c1 !important;">
+    <div class="card-body d-flex flex-column align-items-center justify-content-center text-center gap-2 mt-2">
+                  <div class="rounded-circle d-flex align-items-center justify-content-center"
+            style="width:56px;height:56px;background:#f0ebff;flex-shrink:0;">
+            <i class="bi bi-folder2-open fs-4" style="color:#6f42c1;"></i>
+          </div>
+          <div>
+            <div class="text-muted small fw-semibold">Total Kategori</div>
+            <div class="fw-bold fs-4">{{ total_kategori }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stok Menipis -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #fd7e14 !important;">
+        <div class="card-body d-flex flex-column align-items-center justify-content-center text-center gap-2 mt-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center"
+            style="width:56px;height:56px;background:#fff3e0;flex-shrink:0;">
+            <i class="bi bi-exclamation-triangle fs-4 text-warning"></i>
+          </div>
+          <div>
+            <div class="text-muted small fw-semibold">Stok Menipis</div>
+            <div class="fw-bold fs-4 text-warning">{{ stok_menipis }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stok Habis -->
+    <div class="col-xl-3 col-md-6">
+      <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #dc3545 !important;">
+        <div class="card-body d-flex flex-column align-items-center justify-content-center text-center gap-2 mt-2">
+          <div class="rounded-circle d-flex align-items-center justify-content-center"
+            style="width:56px;height:56px;background:#fdecea;flex-shrink:0;">
+            <i class="bi bi-x-circle fs-4 text-danger"></i>
+          </div>
+          <div>
+            <div class="text-muted small fw-semibold">Stok Habis</div>
+            <div class="fw-bold fs-4 text-danger">{{ stok_habis }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <section class="section mt-4">
+    <div class="row g-0">
+      <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-0">
+          <div
+            class="card-header bg-primary text-white d-flex justify-content-between align-items-center mb-3">
+            <!-- <h5 class="m-0">Daftar Kategori</h5> -->
+          </div>
+
+          <div class="card-body">
+            <div class="table-responsive">
+              <table
+                id="dasTable"
+                class="table table-hover table-bordered align-middle w-100">
+                <thead class="table-primary">
+                  <tr>
+                    <th style="width: 1%" class="text-center">No</th>
+                    <th style="width: 8%">Nama Barang</th>
+                    <th style="width: 8%">Kategori</th>
+                    <th style="width: 3%">Stok</th>
+                    <th style="width: 3%">Satuan</th>
+                    <th style="width: 5%">Harga Jual</th>
+                    <th style="width: 5%">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Data akan dimuat oleh DataTables -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  #kategoriTable_wrapper .dataTables_info,
+  #kategoriTable_wrapper .dataTables_paginate {
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+  }
+
+  main.main {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .card {
+    margin: 0 !important;
+  }
+
+  /* DataTables Custom Layout */
+  #dasTable_wrapper .dataTables_length {
+    display: inline-block;
+    margin-right: 0;
+  }
+
+  #dasTable_wrapper .dataTables_filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    float: right;
+  }
+
+  #dasTable_wrapper .dataTables_filter label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  #dasTable_wrapper .dataTables_filter input {
+    display: inline-block;
+    width: 180px;
+    margin: 0;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+
+  .filter-kategori-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0 1rem;
+    float: right;
+  }
+
+  .filter-kategori-wrapper label {
+    margin: 0;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+
+  .filter-kategori-wrapper select {
+    display: inline-block;
+    width: 180px;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+
+  #dasTable_wrapper .dataTables_length,
+  #dasTable_wrapper .dataTables_filter,
+  .filter-kategori-wrapper {
+    vertical-align: middle;
+  }
+
+  /* Wrapper untuk top controls */
+  #dasTable_wrapper .top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  /* Clear float untuk row berikutnya */
+  #dasTable_wrapper .dataTables_info {
+    clear: both;
+  }
+</style>
+{% endblock %} {% block extra_js %}
+<!-- Script toggle untuk input dan untuk table -->
+
+<!-- DataTables JS -->
+<script src="{% static 'assets/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables/dataTables.bootstrap5.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/vendor/datatables/responsive.bootstrap5.min.js' %}"></script>
+
+<!-- SweetAlert2 JS -->
+<script src="{% static 'assets/vendor/sweetalert2/sweetalert2.all.min.js' %}"></script>
+
+<script>
+  $(document).ready(function () {
+    // Initialize DataTables
+    var table = $("#dasTable").DataTable({
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+           "<'row'<'col-sm-12'tr>>" +
+           "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+      ajax: {
+        url: "{% url 'das_datatable' %}",
+        type: "GET",
+        data: function (d) {
+          d.kategori_id = $("#filterKategori").val();
+        },
+      },
+      columns: [
+        {
+          data: null,
+          orderable: false,
+          render: function (data, type, row, meta) {
+            return meta.row + meta.settings._iDisplayStart + 1;
+          },
+        },
+        { data: "nama_barang" },
+        { data: "kategori" },
+        { data: "stok" },
+        { data: "satuan" },
+        { data: "harga_jual" },
+        {
+          data: "actions",
+          orderable: false,
+        },
+      ],
+      pageLength: 10,
+      lengthMenu: [
+        [10, 25, 50, 100],
+        [10, 25, 50, 100],
+      ],
+      language: {
+        processing: "Memproses...",
+        search: "Cari:",
+        lengthMenu: "Tampilkan _MENU_ data per halaman",
+        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+        infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+        infoFiltered: "(disaring dari _MAX_ total data)",
+        paginate: {
+          first: "Pertama",
+          last: "Terakhir",
+          next: "Prev",
+          previous: "Next",
+        },
+        emptyTable: "Tidak ada data tersedia",
+      },
+    });
+
+    // Tambahkan filter kategori ke DataTables wrapper
+    var filterHtml = `<span class="filter-kategori-wrapper">
+        <label for="filterKategori">
+          <i class="bi bi-funnel"></i> Kategori:
+        </label>
+        <select id="filterKategori" class="form-select form-select-sm">
+          <option value="">-- Semua Kategori --</option>
+          {% for kategori in kategoris %}
+          <option value="{{ kategori.id_kategori }}">
+            {{ kategori.nama_kategori }}
+          </option>
+          {% endfor %}
+        </select>
+      </span>`;
+    
+    // Insert filter setelah search input
+    $("#dasTable_filter").append(filterHtml);
+
+    // Handle filter kategori change
+    $(document).on("change", "#filterKategori", function () {
+      table.ajax.reload();
+    });
+
+    // Handle delete button dengan konfirmasi
+    $(document).on("click", ".btn-delete", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var deleteUrl = $(this).data("href");
+      var barangName = $(this).data("name");
+
+      Swal.fire({
+        title: "Hapus Barang?",
+        html: `Apakah Anda yakin ingin menghapus barang <strong>${barangName}</strong>?<br><small class="text-muted">Tindakan ini tidak dapat dibatalkan.</small>`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Ya, Hapus!",
+        cancelButtonText: "Batal",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Redirect ke delete URL
+          window.location.href = deleteUrl;
+        }
+      });
+    });
+
+    // DataTables initialization completed above
+  });
+</script>
+{% endblock %}

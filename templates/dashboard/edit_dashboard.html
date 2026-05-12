@@ -1,0 +1,585 @@
+{% extends 'layouts/main.html' %} {% load static %} {% block title %}Edit
+Barang{% endblock %} {% block content %}
+<main id="main" class="main">
+  <!-- <div class="pagetitle">
+    <h1 class="text-primary fw-bold">Tambah Barang Baru</h1>
+    <nav>
+      <ol class="breadcrumb bg-light p-2 rounded">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item">
+          <a href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Tambah Barang</li>
+      </ol>
+    </nav>
+  </div> -->
+
+  <section class="section mt-2">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-primary text-white">
+            <h5 class="m-0">Form Edit Barang</h5>
+          </div>
+
+          <div class="card-body p-4">
+            {% if messages %} {% for message in messages %}
+            <div
+              class="alert alert-{{ message.tags }} alert-dismissible fade show"
+              role="alert">
+              <i
+                class="bi bi-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+              {{ message }}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"></button>
+            </div>
+            {% endfor %} {% endif %}
+
+            <form
+              method="POST"
+              action="{% url 'edit_dashboard' dashboard.id_dashboard %}"
+              class="needs-validation"
+              enctype="multipart/form-data"
+              novalidate>
+              {% csrf_token %}
+
+              <!-- Hidden flag untuk tracking penghapusan gambar -->
+              <input
+                type="hidden"
+                id="remove_image_flag"
+                name="remove_image"
+                value="0" />
+
+              <!-- Row 1: Foto Barang (Diperlebar) -->
+              <div class="row mb-2">
+                <div class="col-md-12">
+                  <div class="mb-4">
+                    <label for="foto_barang" class="form-label fw-bold">
+                      <i class="bi bi-image me-2 text-primary"></i>
+                      Foto Barang
+                    </label>
+
+                    <!-- Hidden File Input -->
+                    <!-- Hidden File Input -->
+                    <input
+                      type="file"
+                      class="form-control form-control-lg d-none"
+                      id="foto_barang"
+                      name="foto_barang"
+                      accept="image/jpeg,image/png" />
+
+<!-- Upload Area (muncul jika tidak ada foto) -->
+                    <div
+                      class="upload-area border-2 border-dashed rounded p-5 text-center"
+                      id="uploadArea"
+                      style="
+                        cursor: pointer;
+                        background-color: #f8f9fa;
+                        transition: all 0.3s ease;
+                        min-height: 250px;
+                        display: {% if dashboard.foto_barang and dashboard.foto_barang.name %}none{% else %}flex{% endif %};
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                      ">
+                      <i class="bi bi-cloud-arrow-up" style="font-size: 3rem; color: #0d6efd"></i>
+                      <p class="mt-4 mb-2" style="font-weight: 500; color: #333; font-size: 1rem">
+                        Klik untuk memilih foto, atau seret file ke sini
+                      </p>
+                      <p class="small text-muted mb-3">Format: JPG, PNG — Maks 2 MB</p>
+                      <button type="button" class="btn btn-sm btn-outline-primary">Pilih Foto</button>
+                    </div>
+                    <!-- Image Preview (muncul jika ada foto) -->
+                    <div
+                      id="previewContainer"
+                      style="
+                        margin-top: 15px;
+                        display: {% if dashboard.foto_barang and dashboard.foto_barang.name %}flex{% else %}none{% endif %};
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        text-align: center;
+                      ">
+                      <img
+                        id="preview"
+                        {% if dashboard.foto_barang and dashboard.foto_barang.name %}src="{{ dashboard.foto_barang.url }}"{% endif %}
+                        style="
+                          width: 30%;
+                          height: auto;
+                          object-fit: cover;
+                          border-radius: 8px;
+                          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                        " />
+
+                      <div class="d-flex gap-2 mt-3" id="imageActions">
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-warning"
+                          id="reuploadImage">
+                          <i class="bi bi-arrow-clockwise me-1"></i> Upload
+                          Ulang
+                        </button>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-danger"
+                          id="removeImage">
+                          <i class="bi bi-trash me-1"></i> Hapus
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 2: Nama Barang, Kategori, dan Satuan (Jejerkan) -->
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-2">
+                    <label for="nama_barang" class="form-label fw-bold">
+                      <i class="bi bi-box2 me-2 text-primary"></i>
+                      Nama Barang
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="nama_barang"
+                      name="nama_barang"
+                      placeholder="Contoh: Es Krim Vanila..."
+                      value="{{ dashboard.nama_barang }}"
+                      required
+                      minlength="3"
+                      maxlength="255" />
+                    <!-- <div class="form-text">Masukkan nama barang yang jelas</div>
+                    <div class="invalid-feedback">
+                      Nama barang harus diisi (minimal 3 karakter)
+                    </div> -->
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="mb-2">
+                    <label for="kategori" class="form-label fw-bold">
+                      <i class="bi bi-folder2-open me-2 text-primary"></i>
+                      Kategori
+                    </label>
+
+                    <!-- SESUDAH -->
+                    <select class="form-select form-select-lg" id="kategori" name="kategori" required>
+                      <option value="">-- Pilih Kategori --</option>
+                      {% for kat in kategoris %}
+                      <option value="{{ kat.id_kategori }}"
+                        {% if dashboard.kategori_id == kat.id_kategori %}selected{% endif %}>
+                        {{ kat.nama_kategori }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="mb-2">
+                    <label for="satuan" class="form-label fw-bold">
+                      <i class="bi bi-rulers me-2 text-primary"></i>
+                      Satuan
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="satuan"
+                      name="satuan"
+                      placeholder="Contoh: Pcs, Kg, Liter..."
+                      value="{{ dashboard.satuan }}"
+                      required
+                      maxlength="100" />
+                    <!-- <div class="invalid-feedback">Satuan harus diisi</div> -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 3: Jumlah Stok dan Stok Minimum -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="jumlah_stok" class="form-label fw-bold">
+                      <i class="bi bi-stack me-2 text-primary"></i>
+                      Jumlah Stok
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="jumlah_stok"
+                      name="jumlah_stok"
+                      placeholder="0"
+                      min="0"
+                      value="{{ dashboard.jumlah_stok }}"
+                      required />
+                    <!-- <div class="invalid-feedback">Jumlah stok harus diisi</div> -->
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="stok_minimum" class="form-label fw-bold">
+                      <i
+                        class="bi bi-exclamation-triangle me-2 text-warning"></i>
+                      Stok Minimum
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="stok_minimum"
+                      name="stok_minimum"
+                      placeholder="0"
+                      min="0"
+                      value="{{ dashboard.stok_minimum }}"
+                      required />
+                    <!-- <div class="form-text">
+                      Akan alert jika stok di bawah angka ini
+                    </div> -->
+                    <!-- <div class="invalid-feedback">Stok minimum harus diisi</div> -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 4: Harga Beli dan Harga Jual -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="harga_beli" class="form-label fw-bold">
+                      <i class="bi bi-cash-coin me-2 text-primary"></i>
+                      Harga Beli
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="harga_beli"
+                      name="harga_beli"
+                      placeholder="0"
+                      min="0"
+                      step="0.01"
+                      value="{{ dashboard.harga_beli }}"
+                      required />
+                    <!-- <div class="invalid-feedback">Harga beli harus diisi</div> -->
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="harga_jual" class="form-label fw-bold">
+                      <i class="bi bi-tag me-2 text-primary"></i>
+                      Harga Jual
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="harga_jual"
+                      name="harga_jual"
+                      placeholder="0"
+                      min="0"
+                      step="0.01"
+                      value="{{ dashboard.harga_jual }}"
+                      required />
+                    <div class="invalid-feedback">Harga jual harus diisi</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 5: Berat dan Lokasi Simpan -->
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="berat" class="form-label fw-bold">
+                      <i class="bi bi-weight me-2 text-primary"></i>
+                      Berat (Kg)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control form-control-lg"
+                      id="berat"
+                      name="berat"
+                      placeholder="0"
+                      min="0"
+                      step="0.01"
+                      value="{{ dashboard.berat }}"
+                      required />
+                    <div class="invalid-feedback">Berat harus diisi</div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="lokasi_simpan" class="form-label fw-bold">
+                      <i class="bi bi-geo-alt me-2 text-primary"></i>
+                      Lokasi Simpan
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="lokasi_simpan"
+                      name="lokasi_simpan"
+                      placeholder="Contoh: Rak A1, Kulkas 2..."
+                      value="{{ dashboard.lokasi_simpan }}"
+                      required
+                      maxlength="255" />
+                    <div class="invalid-feedback">
+                      Lokasi simpan harus diisi
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Row 6: Deskripsi -->
+              <div class="mb-2">
+                <label for="deskripsi" class="form-label fw-bold">
+                  <i class="bi bi-card-text me-2 text-primary"></i>
+                  Deskripsi Barang
+                </label>
+                <textarea
+                  class="form-control form-control-lg"
+                  id="deskripsi"
+                  name="deskripsi"
+                  rows="4"
+                  placeholder="Deskripsi lengkap tentang barang ini (Opsional)">{{ dashboard.deskripsi }}</textarea
+                >
+              </div>
+
+              <!-- Buttons -->
+              <div class="d-flex gap-2 justify-content-end mt-2">
+                <a
+                  href="{% url 'dashboard' %}"
+                  class="btn btn-secondary btn-lg">
+                  <i class="bi bi-x-circle me-2"></i>
+                  Kembali
+                </a>
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-pencil-square me-2"></i>
+                  Update Barang
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Info Card -->
+        <!-- <div class="card mt-4 border-0 bg-light">
+          <div class="card-body">
+            <h6 class="card-title mb-3">
+              <i class="bi bi-info-circle text-info me-2"></i>
+              Informasi Penting
+            </h6>
+            <ul class="small mb-0">
+              <li>Pastikan semua data barang sudah benar sebelum menyimpan</li>
+              <li>Harga jual biasanya lebih besar dari harga beli</li>
+              <li>Stok minimum digunakan untuk alert kehabisan stok</li>
+              <li>Anda dapat mengedit data barang setelah dibuat</li>
+            </ul>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  main.main {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .section {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .card {
+    margin: 0 !important;
+    border-radius: 8px;
+  }
+
+  .form-control-lg,
+  .form-select-lg {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    font-size: 1rem;
+  }
+
+  .form-control-lg:focus,
+  .form-select-lg:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  /* Form validation styles */
+  .was-validated .form-control:valid,
+  .was-validated .form-select:valid {
+    border-color: #28a745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: calc(1.5em + 0.75rem);
+  }
+
+  .was-validated .form-control:invalid,
+  .was-validated .form-select:invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5h-.6z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: calc(1.5em + 0.75rem);
+  }
+
+  @media (max-width: 768px) {
+    .row {
+      padding: 0 1rem;
+    }
+
+    .d-flex.gap-2 {
+      flex-direction: column;
+    }
+
+    .d-flex.gap-2 .btn {
+      width: 100%;
+    }
+  }
+</style>
+
+{% block extra_js %}
+<script>
+  const fileInput = document.getElementById("foto_barang");
+  const previewContainer = document.getElementById("previewContainer");
+  const preview = document.getElementById("preview");
+  const removeImageBtn = document.getElementById("removeImage");
+  const reuploadImageBtn = document.getElementById("reuploadImage");
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
+
+  // Upload ulang button - trigger file input
+  if (reuploadImageBtn) {
+    reuploadImageBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      fileInput.click();
+    });
+  }
+
+  // File input change - handle file selection
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFile(file);
+    }
+  });
+
+  // Handle file validation and preview
+  function handleFile(file) {
+    // Validasi file size
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Ukuran file terlalu besar. Maksimal 2 MB.");
+      fileInput.value = "";
+      return;
+    }
+
+    // Validasi file type
+    if (!["image/jpeg", "image/png"].includes(file.type)) {
+      alert("Format file harus JPG atau PNG");
+      fileInput.value = "";
+      return;
+    }
+
+    // Preview image
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      preview.src = event.target.result;
+      if (previewContainer) {
+        previewContainer.style.display = "flex";
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Remove image button - clear file input
+  if (removeImageBtn) {
+    removeImageBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      fileInput.value = "";
+      document.getElementById("remove_image_flag").value = "1";
+      if (previewContainer) {
+        previewContainer.innerHTML =
+          '<p class="text-muted">Tidak ada foto barang</p>';
+      }
+    });
+  }
+
+  // Form validation
+  (function () {
+    "use strict";
+    window.addEventListener(
+      "load",
+      function () {
+        var forms = document.querySelectorAll(".needs-validation");
+        Array.prototype.slice.call(forms).forEach(function (form) {
+          form.addEventListener(
+            "submit",
+            function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add("was-validated");
+            },
+            false,
+          );
+        });
+      },
+      false,
+    );
+  })();
+  // Klik upload area → trigger file input
+  document.getElementById("uploadArea").addEventListener("click", function () {
+    document.getElementById("foto_barang").click();
+  });
+
+  // Saat file dipilih → tampilkan preview, sembunyikan upload area
+  document
+    .getElementById("foto_barang")
+    .addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        document.getElementById("preview").src = ev.target.result;
+        document.getElementById("previewContainer").style.display = "flex";
+        document.getElementById("uploadArea").style.display = "none";
+      };
+      reader.readAsDataURL(file);
+    });
+
+  // Tombol Hapus → sembunyikan preview, tampilkan upload area
+  document.getElementById("removeImage").addEventListener("click", function () {
+    document.getElementById("preview").src = "";
+    document.getElementById("foto_barang").value = "";
+    document.getElementById("previewContainer").style.display = "none";
+    document.getElementById("uploadArea").style.display = "flex";
+    document.getElementById("remove_image_flag").value = "1";
+  });
+
+  // Tombol Upload Ulang → trigger file input lagi
+  document
+    .getElementById("reuploadImage")
+    .addEventListener("click", function () {
+      document.getElementById("foto_barang").click();
+    });
+</script>
+{% endblock %} {% endblock %}
